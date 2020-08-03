@@ -8,3 +8,6 @@ npx sequelize-cli model:generate --name table_name --attributes firstName:string
 
 ## running migration
 npx sequelize-cli db:migrate
+
+## code structure used from 
+[@muddassarshaikh/commonAPI]( https://github.com/muddassarshaikh/commonAPI )
