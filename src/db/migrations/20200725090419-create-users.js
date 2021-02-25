@@ -24,6 +24,18 @@ module.exports = {
         type: Sequelize.BOOLEAN,
         defaultValue: 0,
       },
+      isEmailVerified: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: 0,
+      },
+      isActive: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: 1,
+      },
+      isDeleted: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: 0,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

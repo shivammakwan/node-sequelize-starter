@@ -2,11 +2,11 @@ const dotenv = require("dotenv");
 dotenv.config({ path: ".env" });
 
 module.exports = {
-  development: {
+  DEV: {
     username: process.env.DEV_DB_USER,
     password: process.env.DEV_DB_PASSWORD,
     database: process.env.DEV_DB_NAME,
-    host: "127.0.0.1",
+    host: process.env.DEV_DB_HOST,
     dialect: "mysql",
     pool: {
       max: 5,
@@ -15,14 +15,14 @@ module.exports = {
       idle: 10000,
     },
   },
-  test: {
+  TEST: {
     username: "root",
     password: null,
     database: "database_test",
     host: "127.0.0.1",
     dialect: "mysql",
   },
-  production: {
+  PROD: {
     username: "root",
     password: null,
     database: "database_production",

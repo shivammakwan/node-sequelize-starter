@@ -1,8 +1,6 @@
 const db = require("../../../../models");
-const User = db.users;
-const { connection_failed } = require("../../../../../../common/statusCode");
-const { sequelizeConfig: Sequelize } = require("../../../../config/config");
-
+const User = db.Users;
+const { connection_failed } = require("../../../../utils/statusCode");
 const { Op } = require("sequelize");
 
 class UserDatabase {
@@ -11,7 +9,7 @@ class UserDatabase {
    * @param {*} req (email address & mobileNumber)
    * @param {*} res (json with success/failure)
    */
-  async checkIfuserExists(emailAddress) {
+  async checkIfUserExists(emailAddress) {
     try {
       const details = await User.findAll({ where: { email: emailAddress } });
       return details;

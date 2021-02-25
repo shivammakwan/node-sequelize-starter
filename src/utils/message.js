@@ -29,7 +29,7 @@ module.exports = {
   registration: 'Registration done successfully',
   invalidEmail: 'Please insert email address in correct format',
   invalidLoginDetails: 'Invalid login details',
-  duplicateDetails: 'Email Address or mobile number already exists',
+  duplicateDetails: 'Email Address already exists',
   emailVerify: 'Please complete email verification process',
   emailVerificationSuccess:
     'Email address successfully verified. Please login to continue',

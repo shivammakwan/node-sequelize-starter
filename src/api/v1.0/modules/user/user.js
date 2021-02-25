@@ -1,11 +1,9 @@
-const model = require("../../../../models");
-const User = model.users;
+const fs = require("fs");
 const db = require("./db");
 const statusCode = require("../../../../utils/statusCode");
 const message = require("../../../../utils/message");
 const functions = require("../../../../utils/functions");
 const config = require("../../../../../config");
-
 class UserService {
   /**
    * Add User
@@ -14,22 +12,11 @@ class UserService {
    */
   async registration(info) {
     try {
-      if (
-        !validator.isEmail(info.email) ||
-        validator.isEmpty(info.password) ||
-        validator.isEmpty(info.fullName) ||
-        validator.isEmpty(info.mobileNumber)
-      ) {
-        throw {
-          statusCode: statusCode.bad_request,
-          message: message.badRequest,
-          data: null,
-        };
-      }
+      const checkIfUserExists = await db
+        .userDatabase()
+        .checkIfUserExists(info.email);
 
-      const checkIfuserExists = await db.userDatabase().checkIfuserExists(info);
-
-      if (checkIfuserExists.length > 0) {
+      if (checkIfUserExists.length > 0) {
         throw {
           statusCode: statusCode.bad_request,
           message: message.duplicateDetails,
@@ -44,7 +31,7 @@ class UserService {
       let token = await functions.tokenEncrypt(info.email);
       token = Buffer.from(token, "ascii").toString("hex");
       let emailMessage = fs
-        .readFileSync("./common/emailtemplate/welcome.html", "utf8")
+        .readFileSync("./src/utils/emailtemplate/welcome.html", "utf8")
         .toString();
       emailMessage = emailMessage
         .replace("$fullname", info.firstName)
@@ -58,7 +45,7 @@ class UserService {
       return {
         statusCode: statusCode.success,
         message: message.registration,
-        data: userRegistration,
+        data: null,
       };
     } catch (error) {
       throw {
@@ -76,14 +63,6 @@ class UserService {
    */
   async login(info) {
     try {
-      if (!validator.isEmail(info.email)) {
-        throw {
-          statusCode: statusCode.bad_request,
-          message: message.invalidLoginDetails,
-          data: null,
-        };
-      }
-
       const loginDetails = await db.userDatabase().getUser(info.email);
 
       if (loginDetails.length <= 0) {
@@ -102,7 +81,8 @@ class UserService {
         };
       }
 
-      if (loginDetails[0].isActive !== 1 || loginDetails[0].isDeleted !== 0) {
+      if (loginDetails[0].isActive != 1 || loginDetails[0].isDeleted != 0) {
+        console.log(loginDetails[0].isActive, loginDetails[0].isDeleted);
         throw {
           statusCode: statusCode.bad_request,
           message: message.accountDisable,
@@ -119,9 +99,10 @@ class UserService {
       }
 
       const userDetails = {
-        fullName: loginDetails[0].fullName,
+        firstName: loginDetails[0].firstName,
+        lastName: loginDetails[0].lastName,
         email: loginDetails[0].email,
-        mobileNumber: loginDetails[0].mobileNumber,
+        isAdmin: loginDetails[0].isAdmin,
       };
 
       const token = await functions.tokenEncrypt(userDetails);
@@ -147,13 +128,23 @@ class UserService {
    * @param  {user details}
    * @return {Success/Fail}
    */
-  async getUsers(info) {
+  async getUserProfile(user) {
     try {
-      const users = await User.findAll();
+      const userProfile = await db.userDatabase().getUser(user.email);
+
+      const userDetails = {
+        firstName: userProfile[0].firstName,
+        lastName: userProfile[0].lastName,
+        email: userProfile[0].email,
+        isAdmin: userProfile[0].isAdmin,
+        isEmailVerified: userProfile[0].isEmailVerified,
+        isActive: userProfile[0].isActive,
+        isDeleted: userProfile[0].isDeleted,
+      };
       return {
         status: statusCode.success,
         message: message.success,
-        data: users,
+        data: userDetails,
       };
     } catch (error) {
       throw {

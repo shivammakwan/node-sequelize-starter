@@ -1,11 +1,11 @@
-const config = require('../../config');
-const CryptoJS = require('crypto-js');
-const jwt = require('jsonwebtoken');
-const nodemailer = require('nodemailer');
-const randomstring = require('randomstring');
-const fs = require('fs');
-const { errorHandler } = require('./error');
-const AWS = require('aws-sdk');
+const config = require("../../config");
+const CryptoJS = require("crypto-js");
+const jwt = require("jsonwebtoken");
+const nodemailer = require("nodemailer");
+const randomstring = require("randomstring");
+const fs = require("fs");
+const { errorHandler } = require("./error");
+const AWS = require("aws-sdk");
 
 /**
  * Function for Encrypting the data
@@ -33,7 +33,7 @@ function decryptData(data) {
       var userinfo = JSON.parse(decrypted.toString(CryptoJS.enc.Utf8));
       return userinfo;
     } else {
-      return { userinfo: { error: 'Please send proper token' } };
+      return { userinfo: { error: "Please send proper token" } };
     }
   }
   return data;
@@ -45,7 +45,7 @@ function decryptData(data) {
  * @param {*} return (encrypted data)
  */
 function encryptPassword(data) {
-  var response = CryptoJS.AES.encrypt(data, config.tokenkey);
+  var response = CryptoJS.AES.encrypt(data, config.tokenKey);
   return response.toString();
 }
 
@@ -55,12 +55,12 @@ function encryptPassword(data) {
  * @param {*} return (decrypt data)
  */
 function decryptPassword(data) {
-  var decrypted = CryptoJS.AES.decrypt(data, config.tokenkey);
+  var decrypted = CryptoJS.AES.decrypt(data, config.tokenKey);
   if (decrypted) {
     var userinfo = decrypted.toString(CryptoJS.enc.Utf8);
     return userinfo;
   } else {
-    return { userinfo: { error: 'Please send proper token' } };
+    return { userinfo: { error: "Please send proper token" } };
   }
 }
 
@@ -70,20 +70,20 @@ function decryptPassword(data) {
  * @param {*} return (encrypted data)
  */
 async function tokenEncrypt(data) {
-  var token = await jwt.sign({ data: data }, config.tokenkey, {
+  var token = await jwt.sign({ data: data }, config.tokenKey, {
     expiresIn: 24 * 60 * 60,
   }); // Expires in 1 day
   return token;
 }
 
 /**
- * Function for decryting the userId with session
+ * Function for decrypting the userId with session
  * @param {*} data (data to decrypt)
  * @param {*} return (decrypted data)
  */
 async function tokenDecrypt(data) {
   try {
-    const decode = await jwt.verify(data, config.tokenkey);
+    const decode = await jwt.verify(data, config.tokenKey);
     return decode;
   } catch (error) {
     return error;
@@ -95,7 +95,7 @@ async function tokenDecrypt(data) {
  * @param {*} data (status, data, token)
  * @param {*} return (encrypted data)
  */
-function responseGenerator(statusCode, message, data = '') {
+function responseGenerator(statusCode, message, data = "") {
   var details = {
     statusCode: statusCode,
     message: message,
@@ -116,15 +116,15 @@ function responseGenerator(statusCode, message, data = '') {
  */
 async function sendEmail(to, subject, message) {
   var transporter = nodemailer.createTransport({
-    service: 'gmail',
+    service: "gmail",
     auth: {
-      user: config.SMTPemailAddress,
+      user: config.SMTPEmailAddress,
       pass: config.SMTPPassword,
     },
   });
 
   var mailOptions = {
-    from: 'developers@gmail.com',
+    from: "developers@gmail.com",
     to: to,
     subject: subject,
     html: message,
@@ -146,8 +146,8 @@ async function sendEmail(to, subject, message) {
 function generateRandomString(callback) {
   var referralCode = randomstring.generate({
     length: 9,
-    charset: 'alphanumeric',
-    capitalization: 'uppercase',
+    charset: "alphanumeric",
+    capitalization: "uppercase",
   });
   callback(referralCode);
 }
@@ -157,9 +157,9 @@ function generateRandomString(callback) {
   which used  for generating random password in create user by admin.
 */
 function randomPasswordGenerater(length) {
-  var result = '';
+  var result = "";
   var characters =
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   var charactersLength = characters.length;
   for (var i = 0; i < length; i++) {
     result += characters.charAt(Math.floor(Math.random() * charactersLength));
@@ -176,15 +176,15 @@ async function uploadFile(fileInfo) {
   try {
     const fileType = fileInfo.fileType;
     const fileName = `${fileInfo.fileName}.${fileType}`;
-    var base64 = fileInfo.base64.split(';base64,')[1];
-    var fileBuffer = new Buffer.from(base64, 'base64');
-    if (!fs.existsSync('./public/' + fileInfo.pathInfo)) {
-      await fs.mkdirSync('./public/' + fileInfo.pathInfo, { recursive: true });
+    var base64 = fileInfo.base64.split(";base64,")[1];
+    var fileBuffer = new Buffer.from(base64, "base64");
+    if (!fs.existsSync("./public/" + fileInfo.pathInfo)) {
+      await fs.mkdirSync("./public/" + fileInfo.pathInfo, { recursive: true });
     }
     await fs.writeFileSync(
-      './public/' + fileInfo.pathInfo + fileName,
+      "./public/" + fileInfo.pathInfo + fileName,
       fileBuffer,
-      'utf8'
+      "utf8"
     );
     return { fileName: fileName };
   } catch (e) {
@@ -211,26 +211,26 @@ async function s3FileUpload(postDataObj) {
   try {
     const fileType = postDataObj.fileType;
     const fileName = `${postDataObj.fileName}.${fileType}`;
-    var base64 = postDataObj.base64.split(';base64,')[1];
-    var base64Data = new Buffer.from(base64, 'base64');
-    var contentType = 'application/octet-stream';
-    if (fileType == 'pdf') contentType = 'application/pdf';
+    var base64 = postDataObj.base64.split(";base64,")[1];
+    var base64Data = new Buffer.from(base64, "base64");
+    var contentType = "application/octet-stream";
+    if (fileType == "pdf") contentType = "application/pdf";
     if (
-      fileType == 'png' ||
-      fileType == 'jpg' ||
-      fileType == 'gif' ||
-      fileType == 'jpeg' ||
-      fileType == 'webp' ||
-      fileType == 'bmp'
+      fileType == "png" ||
+      fileType == "jpg" ||
+      fileType == "gif" ||
+      fileType == "jpeg" ||
+      fileType == "webp" ||
+      fileType == "bmp"
     )
       contentType = `image/${fileType}`;
-    if (fileType == 'svg') contentType = 'image/svg+xml';
+    if (fileType == "svg") contentType = "image/svg+xml";
     const params = {
       Bucket: `${config.awsBucket}/user-profile`,
       Key: `${postDataObj.key}.${fileType}`,
       Body: base64Data,
-      ACL: 'public-read',
-      ContentEncoding: 'base64',
+      ACL: "public-read",
+      ContentEncoding: "base64",
       ContentType: contentType,
     };
     const s3BucketFileLocation = await AWSs3Connection.upload(params).promise();

@@ -14,10 +14,10 @@ module.exports = {
   emailVerificationLink:
     process.env[`${process.env.NODE_ENV}_EMAIL_VERIFICATION_LINK`],
   resetPasswordLink: process.env[`${process.env.NODE_ENV}_RESET_PASS_LINK`],
-  tokenkey: process.env[`${process.env.NODE_ENV}_TOKEN_KEY`],
+  tokenKey: process.env[`${process.env.NODE_ENV}_TOKEN_KEY`],
   bodyEncryption: false,
   supportEmail: process.env[`${process.env.NODE_ENV}_SUPPORT_EMAIL`],
-  SMTPemailAddress: process.env[`${process.env.NODE_ENV}_SMTP_EMAILADDRESS`],
+  SMTPEmailAddress: process.env[`${process.env.NODE_ENV}_SMTP_EMAILADDRESS`],
   SMTPPassword: process.env[`${process.env.NODE_ENV}_SMTP_PASS`],
   cryptokey: process.env[`${process.env.NODE_ENV_DB_PASS}_CRYPTO_KEY`],
   paypalURL: process.env[`${process.env.NODE_ENV}_PAYPAL_URL`],

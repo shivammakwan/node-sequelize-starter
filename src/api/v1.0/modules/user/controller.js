@@ -19,12 +19,23 @@ const controller = {
       return next(error);
     }
   },
+  //User Login API
+  login: async (req, res, next) => {
+    try {
+      const user = await object.userService().login(res.locals.requestedData);
+      res.send(
+        functions.responseGenerator(user.statusCode, user.message, user.data)
+      );
+    } catch (error) {
+      return next(error);
+    }
+  },
   //Get User List API
-  getUsers: async (req, res, next) => {
+  getUserProfile: async (req, res, next) => {
     try {
       const users = await object
         .userService()
-        .getUsers(res.locals.requestedData);
+        .getUserProfile(res.locals.tokenInfo);
       res.send(
         functions.responseGenerator(users.statusCode, users.message, users.data)
       );
