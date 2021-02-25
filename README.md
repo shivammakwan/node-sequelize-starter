@@ -1,4 +1,12 @@
-### Firstly follow Readme
+### Firstly clone the repo via git and install dependencies:
+
+```bash
+git clone --depth 1 --single-branch https://github.com/shivammakwan/node-sequelize-starter.git your-project-name
+cd your-project-name
+npm install
+```
+
+### follow Readme
 
 copy .env.example content to .env and setup mysql creds in src/config/cofig.js file
 
