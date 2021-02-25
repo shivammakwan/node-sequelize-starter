@@ -1,6 +1,6 @@
-### Firstly
+### Firstly follow Readme
 
-copy .env.example content to .env and setup mysql creds in config/cofig.js file
+copy .env.example content to .env and setup mysql creds in src/config/cofig.js file
 
 ### create db
 
