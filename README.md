@@ -8,7 +8,7 @@ npm install
 
 ### follow Readme
 
-copy .env.example content to .env and setup mysql creds in src/config/cofig.js file
+copy .env.example content to .env and setup mysql credentials in src/config/config.js file
 
 ### create db
 
