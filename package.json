@@ -27,7 +27,7 @@
     "request-promise": "^4.2.5",
     "sequelize": "^6.5.0",
     "swagger-ui-express": "^4.1.6",
-    "validator": "^13.5.2",
+    "validator": "^13.7.0",
     "winston": "^3.3.3"
   },
   "devDependencies": {
